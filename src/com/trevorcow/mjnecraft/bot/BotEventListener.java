@@ -32,7 +32,7 @@ public class BotEventListener extends SessionAdapter {
 		Packet packet = event.getPacket();
 		if (packet instanceof ServerChatPacket) {
 			ServerChatPacket p = (ServerChatPacket) packet;
-			bot.onChat(p);
+			bot.onChatPacket(p);
 		} else if (packet instanceof ServerJoinGamePacket) {
 			ServerJoinGamePacket p = (ServerJoinGamePacket) packet;
 			bot.onJoinGame(p);

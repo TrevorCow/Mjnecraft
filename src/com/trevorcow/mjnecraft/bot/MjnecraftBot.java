@@ -47,26 +47,48 @@ public class MjnecraftBot {
 
 	}
 
+	public MjnecraftBot(Host host, String username) {
+		this(host, username, null);
+	}
+
+	/**
+	 * Call to connect bot
+	 */
 	public void connect() {
 		client.getSession().connect();
 	}
 
+	/**
+	 * @return Bot's current name
+	 */
 	public String getName() {
 		return protocol.getProfile().getName();
 	}
 
+	/**
+	 * Sends packet as bot
+	 */
 	public void sendPacket(Packet p) {
 		client.getSession().send(p);
 	}
 
+	/**
+	 * Sends the string as a chat message
+	 */
 	public void chat(String message) {
 		session.send(new ClientChatPacket(message));
 	}
 
+	/**
+	 * Fired when the bot successfully connects to the server
+	 */
 	public void onConnected(ConnectedEvent event) {
 		System.out.println("Connected to: " + host);
 	}
 
+	/**
+	 * Fired when the bot disconnects to the server
+	 */
 	public void onDisconnected(DisconnectedEvent event) {
 		System.out.println("Disconnected: " + Message.fromString(event.getReason()).getFullText());
 		if (event.getCause() != null) {
@@ -74,12 +96,18 @@ public class MjnecraftBot {
 		}
 	}
 
-	public void onChat(ServerChatPacket packet) {
+	/**
+	 * Fired when the bot receives a chat message packet
+	 */
+	public void onChatPacket(ServerChatPacket packet) {
 		ChatMessage message = ChatMessage.fromChatPacket(packet);
 		if (message.chatmessage != null)
 			onChat(message);
 	}
 
+	/**
+	 * Fired when the bot receives a chat message
+	 */
 	public void onChat(ChatMessage message) {
 	}
 
