@@ -12,6 +12,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+
 public class ChatMessage {
 
 	public String chatmessage; // The raw chat message

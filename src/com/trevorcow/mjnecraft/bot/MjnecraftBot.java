@@ -17,6 +17,7 @@ import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.tcp.TcpSessionFactory;
 import com.trevorcow.mjnecraft.util.ChatMessage;
 import com.trevorcow.mjnecraft.util.Host;
+import com.trevorcow.mjnecraft.util.PlayerTracker;
 
 public class MjnecraftBot {
 
@@ -25,6 +26,8 @@ public class MjnecraftBot {
 	public Client client;
 	public Session session;
 	public Proxy proxy = Proxy.NO_PROXY;
+
+	public PlayerTracker playerTracker;
 
 	public MjnecraftBot(Host host, String username, String password) {
 		this.host = host;
@@ -44,6 +47,8 @@ public class MjnecraftBot {
 		session.setFlag(MinecraftConstants.AUTH_PROXY_KEY, proxy);
 
 		session.addListener(new BotEventListener(this));
+
+		playerTracker = new PlayerTracker(this);
 
 	}
 
