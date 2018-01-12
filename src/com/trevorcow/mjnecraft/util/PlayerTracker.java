@@ -36,6 +36,8 @@ public class PlayerTracker extends SessionAdapter {
 
 	public PlayerTracker(MjnecraftBot bot) {
 		this.bot = bot;
+
+		bot.session.addListener(this);
 	}
 
 	@Override
