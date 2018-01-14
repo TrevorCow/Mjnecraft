@@ -1,6 +1,6 @@
-# Mjnecraft bot by TrevorCow
+# Mjnecraft
 
-Mjnecraft is a Minecraft bot API written in java
+Mjnecraft is a Minecraft bot API written in java by TrevorCow.
 
 # Current Version
 
