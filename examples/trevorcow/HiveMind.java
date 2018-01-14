@@ -101,11 +101,6 @@ public class HiveMind {
 			}
 		}
 
-		public int test() {
-			Random r = new Random();
-			return (r.nextInt(3)) - 1;
-		}
-
 	}
 
 	public static class SlaveBot extends MjnecraftBot {

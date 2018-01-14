@@ -12,7 +12,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-
 public class ChatMessage {
 
 	public String chatmessage; // The raw chat message
@@ -37,7 +36,7 @@ public class ChatMessage {
 
 		String tranlationType = null;
 
-		// System.out.println(m.toJsonString());
+		System.out.println(m.toJsonString());
 
 		if (m instanceof TranslationMessage) { // This SHOULD only fire if it's mostly vanilla chat message
 			TranslationMessage tm = (TranslationMessage) m;
@@ -45,23 +44,9 @@ public class ChatMessage {
 			tranlationType = tm.getTranslationKey(); // Used if you want to figure out what type of message (chat, announcement, server, etc...)
 			chatmessageobj.translationType = tranlationType;
 
-			if (Lang.LANG_US.containsKey(tranlationType)) { // If it has a valid translation key
-				Object[] transParams = new String[tm.getTranslationParams().length];
-				if (transParams.length > 0) { // If the translation needs formatting
-					int i = 0;
-					for (Message transParam : tm.getTranslationParams()) {
-						transParams[i] = transParam.getFullText();
-						if (Lang.LANG_US.containsKey(transParams[i])) {
-							transParams[i] = Lang.LANG_US.get(transParams[i]);
-							transParams[i] = String.format(transParams[i].toString(), transParams);
-						}
-						i++;
-					}
-					chatmessage = String.format(Lang.LANG_US.get(tranlationType), transParams);
-				} else {
-					chatmessage = Lang.LANG_US.get(tranlationType);
-				}
-			}
+			System.out.println(tranlationType);
+
+			chatmessage = formatMessageWith(m.toJson().getAsJsonObject());
 		} else { // This SHOULD fire for all custom JSON messages from 3rd party servers.
 			JsonObject jmessage = m.toJson().getAsJsonObject();
 			chatmessageobj.translationType = "custom";
@@ -85,11 +70,44 @@ public class ChatMessage {
 		return chatmessageobj;
 	}
 
+	private static String formatMessageWith(JsonObject message) {
+		if (!message.has("translate"))
+			return null;
+		String transKey = message.get("translate").getAsString();
+		JsonArray withRecur = message.get("with").getAsJsonArray();
+		if (Lang.LANG_US.containsKey(transKey)) {
+			Object[] with = new Object[withRecur.size()];
+			int i = 0;
+			for (JsonElement je : withRecur) {
+				if (je.isJsonObject()) {
+					if (je.getAsJsonObject().has("translate")) {
+						with[i] = formatMessageWith(je.getAsJsonObject());
+					} else if (je.getAsJsonObject().has("extra")) {
+						StringBuilder extras = new StringBuilder();
+						parseExtra(je.getAsJsonObject().get("extra").getAsJsonArray(), extras);
+						with[i] = extras.toString();
+					} else if (je.getAsJsonObject().has("text")) {
+						with[i] = je.getAsJsonObject().get("text").getAsString();
+					}
+					i++;
+				}
+			}
+			if (message.getAsJsonObject().has("color")) {
+				return "\u00A7" + Util.ConsoleColor.getId(Util.ConsoleColor.getColorByName(message.getAsJsonObject().get("color").getAsString())) + String.format(Lang.LANG_US.get(transKey), with);
+			}
+			return String.format(Lang.LANG_US.get(transKey), with);
+		}
+		return null;
+	}
+
 	private static void parseExtra(JsonArray jo, StringBuilder chat) {
 		for (JsonElement ex : jo) {
 			if (ex.isJsonObject()) {
 				if (ex.getAsJsonObject().has("extra"))
 					parseExtra(ex.getAsJsonObject().get("extra").getAsJsonArray(), chat);
+			}
+			if (ex.getAsJsonObject().has("color")) {
+				chat.append(Util.ConsoleColor.getColorByName(ex.getAsJsonObject().get("color").getAsString()));
 			}
 			chat.append(ex.getAsJsonObject().get("text").getAsString());
 		}

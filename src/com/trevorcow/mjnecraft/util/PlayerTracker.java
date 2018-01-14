@@ -3,16 +3,17 @@ package com.trevorcow.mjnecraft.util;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import com.github.steveice10.mc.protocol.data.game.chunk.BlockStorage;
 import com.github.steveice10.mc.protocol.data.game.chunk.Chunk;
 import com.github.steveice10.mc.protocol.data.game.chunk.Column;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
+import com.github.steveice10.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerPositionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientTeleportConfirmPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerConfirmTransactionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerBlockChangePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerChunkDataPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUnloadChunkPacket;
@@ -44,13 +45,10 @@ public class PlayerTracker extends SessionAdapter {
 	public void packetReceived(PacketReceivedEvent event) {
 		Packet p = event.getPacket();
 		if (p instanceof ServerKeepAlivePacket) {
-			// ServerKeepAlivePacket pk = (ServerKeepAlivePacket) p;
+			ServerKeepAlivePacket pk = (ServerKeepAlivePacket) p;
 
-			// bot.sendPacket(new ClientKeepAlivePacket(pk.getPingId()));
-		} else if (p instanceof ServerConfirmTransactionPacket) {
-
-		}
-		if (p instanceof ServerPlayerPositionRotationPacket) {
+			// bot.sendPacket(new ServerKeepAlivePacket(pk.getPingId()));
+		} else if (p instanceof ServerPlayerPositionRotationPacket) {
 			ServerPlayerPositionRotationPacket pk = (ServerPlayerPositionRotationPacket) p;
 			lastx = pk.getX();
 			lasty = pk.getY();
@@ -93,7 +91,10 @@ public class PlayerTracker extends SessionAdapter {
 				BlockStorage bs = chunk.getBlocks();
 				if (bs == null)
 					continue;
-				bs.set(bx, by, bz, pk.getRecord().getBlock());
+				try {
+					bs.set(bx, by, bz, pk.getRecord().getBlock());
+				} catch (IndexOutOfBoundsException e) {
+				}
 			}
 			isOnGround = isOnGround();
 		}

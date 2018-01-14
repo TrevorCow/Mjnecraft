@@ -38,7 +38,8 @@ public class MjnecraftBot {
 				protocol = new MinecraftProtocol(username, password, false);
 			} catch (RequestException e) {
 				e.printStackTrace();
-				protocol = new MinecraftProtocol(username);
+				System.err.println("Error logging in with: " + username + ":" + password);
+				System.exit(0);
 			}
 		}
 		client = new Client(host.hostAddr, host.port, protocol, new TcpSessionFactory(proxy));

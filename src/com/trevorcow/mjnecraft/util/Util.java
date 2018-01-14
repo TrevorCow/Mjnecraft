@@ -2,8 +2,6 @@ package com.trevorcow.mjnecraft.util;
 
 import java.util.Random;
 
-import com.trevorcow.mjnecraft.util.Util.ConsoleColor;
-
 public class Util {
 
 	private static final String RANDOM_CHARS = "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?";
@@ -67,7 +65,7 @@ public class Util {
 		RED("91"), //
 		LIGHT_PURPLE("95"), //
 		YELLOW("93"), //
-		WHITE("97"),
+		WHITE("97"), //
 
 		OBFUSCATED("", false), //
 		BOLD("1"), //
@@ -93,6 +91,15 @@ public class Util {
 
 		public boolean shouldUseChar() {
 			return useChar;
+		}
+
+		public static ConsoleColor getColorByName(String name) {
+			try {
+				return (ConsoleColor) ConsoleColor.class.getDeclaredField(name.toUpperCase()).get(RESET);
+			} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+				e.printStackTrace();
+				return null;
+			}
 		}
 
 		public static ConsoleColor getById(char id) {
@@ -141,6 +148,56 @@ public class Util {
 				return ConsoleColor.ITALIC;
 			default:
 				return ConsoleColor.RESET;
+			}
+
+		}
+
+		public static char getId(ConsoleColor color) {
+			switch (color) {
+			case BLACK:
+				return '0';
+			case DARK_BLUE:
+				return '1';
+			case DARK_GREEN:
+				return '2';
+			case DARK_AQUA:
+				return '3';
+			case DARK_RED:
+				return '4';
+			case DARK_PURPLE:
+				return '5';
+			case GOLD:
+				return '6';
+			case GRAY:
+				return '7';
+			case DARK_GRAY:
+				return '8';
+			case BLUE:
+				return '9';
+			case GREEN:
+				return 'a';
+			case AQUA:
+				return 'b';
+			case RED:
+				return 'c';
+			case LIGHT_PURPLE:
+				return 'd';
+			case YELLOW:
+				return 'e';
+			case WHITE:
+				return 'f';
+			case OBFUSCATED:
+				return 'k';
+			case BOLD:
+				return 'l';
+			case STRIKETHROUGH:
+				return 'm';
+			case UNDERLINE:
+				return 'n';
+			case ITALIC:
+				return 'o';
+			default:
+				return ' ';
 			}
 		}
 
